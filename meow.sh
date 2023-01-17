@@ -14,15 +14,28 @@ clear -x
 
 #initialize variables
 GAME_RUNNING=true
+GAME_START_TIME=$(date +%s)
 USER_CHOICE=100
+CURRENT_LOCATION=$USER_CHOICE
 INVALID_SELECTION=false
 SCRATCHES=0
 PURR_REACTION="The cat likes it. (^・ω・^ )"
 
+#create log file if it doesn't exist
+if [ -e "log.csv" ]
+then
+    :
+else
+    touch log.csv
+    printf "start_unix_time,choice_unix_time,current_location,user_choice,n_scratches\n" > log.csv
+fi
+
 function make_your_choice() {
     #sleep 0.5
     printf " \n\nWhat do you do?\n$1\n"
+    CURRENT_LOCATION=$USER_CHOICE
     read -p "Selection: " USER_CHOICE
+    printf "$GAME_START_TIME,$(date +%s),$CURRENT_LOCATION,$USER_CHOICE,$SCRATCHES\n" >> log.csv
     #do some choice checking here to ensure the inputs match expected ones. 
     clear -x
 }
@@ -47,10 +60,10 @@ do
             ;;
         110)
             printf "You pet the cat. $PURR_REACTION"
+            ((SCRATCHES++))
             make_your_choice "110: Keep petting the cat\n120: Say goodbye to the kitty and walk on by."
             if [ "$USER_CHOICE" -eq "110" ]
                 then
-                    ((SCRATCHES++))
                     case $SCRATCHES in
                         1)
                             PURR_REACTION="it really likes it! (^･ｪ･^)"
