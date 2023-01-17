@@ -1,5 +1,27 @@
 #! /bin/bash
 
+clear -x
+ACCEPTED_VALUES="110 0"
+USER_CHOICE="hej"
+CONDITION="\"$USER_CHOICE\" == \"quit\" "
+for VALUE in $ACCEPTED_VALUES
+    do CONDITION+=" || \"$USER_CHOICE\" == \"$VALUE\" "
+    
+done
+echo $CONDITION
+
+# if [ "$USER_CHOICE" == "101" ]
+c() {
+        if [[ $CONDITION ]]
+            then
+                echo "yep"
+            else
+                echo "no"
+        fi
+}
+c
+exit
+
 
 clear -x
 printf "Welcome to the cat game!\n\n"
