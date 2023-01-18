@@ -33,11 +33,41 @@ fi
 function make_your_choice() {
     #sleep 0.5
     printf " \n\nWhat do you do?\n$1\n"
+    #save users current location in the game to allow for logging as below
     CURRENT_LOCATION=$USER_CHOICE
     read -p "Selection: " USER_CHOICE
+    #logging
     printf "$GAME_START_TIME,$(date +%s),$CURRENT_LOCATION,$USER_CHOICE,$SCRATCHES\n" >> log.csv
-    #do some choice checking here to ensure the inputs match expected ones. 
     clear -x
+}
+
+valid_choices () {
+    #Tests to ensure the USER_CHOICE corresponds with a valid array position of ACCEPTED VALUES, handling errors if it doesn't.
+    #TODO bug as scratches keep increasing if wrong choice is made in 110
+ACCEPTED_VALUES=($1)
+
+#magic to test whether the USER_CHOICE supports arithmetics.
+INTEGER_TEST=`echo $((($USER_CHOICE*2)/2))`
+
+if [ "$USER_CHOICE" == "$INTEGER_TEST" ]
+    then
+        if [ $USER_CHOICE -gt ${#ACCEPTED_VALUES[@]} ]
+            then
+                read -s -p "You have entered an unknown command. Press Enter to go back."
+                USER_CHOICE=$CURRENT_LOCATION
+            else
+                USER_CHOICE=${ACCEPTED_VALUES[USER_CHOICE-1]}
+        fi
+    else 
+        if [ "$USER_CHOICE" == "quit" ]
+            then
+                :
+            else
+                read -s -p "You have entered an unknown command. Press Enter to go back."
+                USER_CHOICE=$CURRENT_LOCATION
+        fi
+fi
+clear -x
 }
 
 while $GAME_RUNNING
@@ -45,23 +75,25 @@ do
     case "$USER_CHOICE" in
         100)
             printf "You're walking in a quiet street, it is light outside, and you are enjoying the weather. You need to hurry up, as you need to make your appointment."
-            make_your_choice "101: hurry up\n102: walk in a relaxed pace."
+            make_your_choice "1: hurry up\n2: walk in a relaxed pace."
+            valid_choices "101 101" #illusion of choice muahaha.
             if [ "$USER_CHOICE" == "101" ]
                 then
                     ANSWER="hurry up"
                 else
                     ANSWER="walk in a relaxed pace"
             fi
-            USER_CHOICE=101 #illusion of choice muahaha.
             ;;
         101)
             printf "You $ANSWER. After a while, you see a cat on the road. It looks like a cute cat. (^._.^)ﾉ"
-            make_your_choice "110: pet the cat\n120: walk near the cat\n999: hurry up!"
+            make_your_choice "1: pet the cat\n2: walk near the cat\n3: hurry up!"
+            valid_choices "110 120 900"
             ;;
         110)
             printf "You pet the cat. $PURR_REACTION"
             ((SCRATCHES++))
-            make_your_choice "110: Keep petting the cat\n120: Say goodbye to the kitty and walk on by."
+            make_your_choice "1: Keep petting the cat\n2: Say goodbye to the kitty and walk on by."
+            valid_choices "110 120"
             if [ "$USER_CHOICE" -eq "110" ]
                 then
                     case $SCRATCHES in
@@ -102,7 +134,8 @@ do
                     IS_ALREADY_PETTED="Go back and pet the cat some more"
             fi
             printf "You hear the cat meowing, but you really need to hurry up. But the cat just looks so cute!"
-            make_your_choice "110: $IS_ALREADY_PETTED\n130: Say goodbye to the kitty and walk on by."
+            make_your_choice "1: $IS_ALREADY_PETTED\n2: Say goodbye to the kitty and walk on by."
+            valid_choices "110 130"
             if [ "$USER_CHOICE" -eq "130" ] && [ "$SCRATCHES" -eq "0" ]
             then
                 USER_CHOICE=900
@@ -118,15 +151,18 @@ do
             ;;
         900)
             printf "you hurry up, and make it on to the bus. You look out of the window, and see the cat. The cat is sad, and you feel bad."
-            make_your_choice "101: Play again\nquit: quit game"
+            make_your_choice "1: Play again\nquit: quit game"
+            valid_choices "100"
             ;;
         910)
             printf "you hurry up. You get on your bus, and think of the cat. You hope the cat is happy and appreciates your scritches. You wonder what would happen if you petted it some more."
-            make_your_choice "101: Play again\nquit: quit game"
+            make_your_choice "1: Play again\nquit: quit game"
+            valid_choices "100"
             ;;
         920)
             printf "you hurry up. You don't make the bus, and send a message letting your friend know you're gonna be late. He texts back that it's okay. The cat apparently followed you, and you play with him until your bus arrives."
-            make_your_choice "101: Play again\nquit: quit game"
+            make_your_choice "1: Play again\nquit: quit game"
+            valid_choices "100"
             ;;
         template)
             printf ""
