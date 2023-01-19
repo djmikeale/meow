@@ -1,5 +1,9 @@
 #! /bin/bash
 
+#testing ground:
+#clear -x
+#exit
+
 clear -x
 printf "Welcome to the cat game!\n\n"
 echo "   |\---/|"
@@ -51,7 +55,7 @@ INTEGER_TEST=`echo $((($USER_CHOICE*2)/2))`
 
 if [ "$USER_CHOICE" == "$INTEGER_TEST" ]
     then
-        if [ $USER_CHOICE -gt ${#ACCEPTED_VALUES[@]} ]
+        if [[ $USER_CHOICE -gt ${#ACCEPTED_VALUES[@]} || $USER_CHOICE -le 0 ]]
             then
                 read -s -p "You have entered an unknown command. Press Enter to go back."
                 USER_CHOICE=$CURRENT_LOCATION
@@ -75,17 +79,27 @@ do
     case "$USER_CHOICE" in
         100)
             printf "You're walking in a quiet street, it is light outside, and you are enjoying the weather. You need to hurry up, as you need to make your appointment."
-            make_your_choice "1: hurry up\n2: walk in a relaxed pace."
-            valid_choices "101 101" #illusion of choice muahaha.
-            if [ "$USER_CHOICE" == "101" ]
-                then
-                    ANSWER="hurry up"
-                else
-                    ANSWER="walk in a relaxed pace"
-            fi
+            make_your_choice "1: walk in a relaxed pace\n2: hurry up."
+            valid_choices "101 102"
             ;;
         101)
-            printf "You $ANSWER. After a while, you see a cat on the road. It looks like a cute cat. (^._.^)ﾉ"
+            printf "You walk in a relaxed pace."
+            for (( i=1; i<$(( $RANDOM % 10 )) + 5; i++ ))
+            do
+                sleep 0.5
+                printf "."
+            done
+            sleep 0.5
+            make_your_choice "1: continue"
+            valid_choices "103"
+            ;;
+        102)
+            printf "You hurry up"
+            make_your_choice "1: continue"
+            valid_choices "103"
+            ;;
+        103)
+            printf "After a while, you see a cat on the road. It looks like a cute cat. (^._.^)ﾉ"
             make_your_choice "1: pet the cat\n2: walk near the cat\n3: hurry up!"
             valid_choices "110 120 900"
             ;;
@@ -191,4 +205,3 @@ echo "  )  |  \  '.___________|/"
 echo "  '--'   '--'"
 
 exit
-
