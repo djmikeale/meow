@@ -23,8 +23,7 @@ USER_CHOICE=100
 CURRENT_LOCATION=$USER_CHOICE
 INVALID_SELECTION=false
 SCRATCHES=0
-PURR_REACTION="The cat likes it. (^・ω・^ )"
-
+PURR_REACTIONS=("The cat likes it. (^・ω・^ )" "it really likes it! (^･ｪ･^)" "it still really likes it (=^･ｪ･^=)" "it starts to purr (=ｘェｘ=)" "it lies down, exposing its big fluffy belly ヾ(=ﾟ･ﾟ=)ﾉ" "you scratch its belly, and it doesn't approve. It promptly scratches your hand! Ow. ଲ(ⓛωⓛ)ଲ" "you make sure to stay away from its belly this time. The cat likes it. You scratch its head. It likes it. [^._.^]ﾉ彡" "It reminds you of when you were small. All you wanted was a little cat, just like this one. You hope that this cat belongs to a child, just like you once were." "You really should be going now, to make your appointment")
 #create log file if it doesn't exist
 if [ -e "log.csv" ]
 then
@@ -104,41 +103,10 @@ do
             valid_choices "110 120 900"
             ;;
         110)
-            printf "You pet the cat. $PURR_REACTION"
+            printf "You pet the cat. ${PURR_REACTIONS[SCRATCHES]}"
             ((SCRATCHES++))
             make_your_choice "1: Keep petting the cat\n2: Say goodbye to the kitty and walk on by."
             valid_choices "110 120"
-            if [ "$USER_CHOICE" -eq "110" ]
-                then
-                    case $SCRATCHES in
-                        1)
-                            PURR_REACTION="it really likes it! (^･ｪ･^)"
-                            ;;
-                        2) 
-                            PURR_REACTION="it still really likes it (=^･ｪ･^=)" 
-                            ;;
-                        3) 
-                            PURR_REACTION="it starts to purr (=ｘェｘ=)" 
-                            ;;
-                        4) 
-                            PURR_REACTION="it lies down, exposing its big fluffy belly ヾ(=ﾟ･ﾟ=)ﾉ" 
-                            ;;
-                        5) 
-                            PURR_REACTION="you scratch its belly, and it doesn't approve. It promptly scratches your hand! Ow. ଲ(ⓛωⓛ)ଲ" 
-                            ;;
-                        6) 
-                            PURR_REACTION="you make sure to stay away from its belly this time. The cat likes it. You scratch its head. It likes it. [^._.^]ﾉ彡" 
-                            ;;
-                        7) 
-                            PURR_REACTION="It reminds you of when you were small. All you wanted was a little cat, just like this one. You hope that this cat belongs to a child, just like you once were." 
-                            ;;
-                        *)
-                            PURR_REACTION="You really should be going now, to make your appointment" 
-                            ;;
-                    esac
-                else 
-                    :
-            fi
             ;;
         120)
             if [ "$SCRATCHES" -eq "0" ]
@@ -186,8 +154,9 @@ do
             GAME_RUNNING=false
             ;;
         *)
-            printf "you chose $USER_CHOICE, which is not a valid number." 
-            read -p "Please write a correct selection, or write quit to quit the game: " USER_CHOICE
+            printf "you chose $USER_CHOICE, which should not be possible! Please send me a message/create github issue with what your choice was, and include info from log.csv <3" 
+            read -s -p "Press Enter to go back."
+            USER_CHOICE=$CURRENT_LOCATION
             ;;
     esac
 done
