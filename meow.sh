@@ -12,7 +12,7 @@ echo "    \_v_/-..----."
 echo " ___/ '   ' ,''+ \  "
 echo "(__...'   __\    |\.___.';"
 echo "  (_,...'(_,.'__)/'.....+"
-echo " "
+echo ""
 read -s -p "Press enter to start the game."
 clear -x
 
@@ -38,9 +38,10 @@ function make_your_choice() {
     printf " \n\nWhat do you do?\n$1\n"
     #save users current location in the game to allow for logging as below
     CURRENT_LOCATION=$USER_CHOICE
+    CURRENT_TIME=$(date +%s)
     read -p "Selection: " USER_CHOICE
     #logging
-    printf "$GAME_START_TIME,$(date +%s),$CURRENT_LOCATION,$USER_CHOICE,$SCRATCHES\n" >> log.csv
+    printf "$GAME_START_TIME,$CURRENT_TIME,$CURRENT_LOCATION,$USER_CHOICE,$SCRATCHES\n" >> log.csv
     clear -x
 }
 
@@ -93,7 +94,7 @@ do
             valid_choices "103"
             ;;
         102)
-            printf "You hurry up"
+            printf "You hurry up. Damn you're fast!"
             make_your_choice "1: continue"
             valid_choices "103"
             ;;
@@ -133,24 +134,55 @@ do
             ;;
         900)
             printf "you hurry up, and make it on to the bus. You look out of the window, and see the cat. The cat is sad, and you feel bad."
-            make_your_choice "1: Play again\nquit: quit game"
-            valid_choices "100"
+            make_your_choice "1: Play again\n2: see your game score"
+            valid_choices "100 990"
             ;;
         910)
             printf "you hurry up. You get on your bus, and think of the cat. You hope the cat is happy and appreciates your scritches. You wonder what would happen if you petted it some more."
-            make_your_choice "1: Play again\nquit: quit game"
-            valid_choices "100"
+            make_your_choice "1: Play again\n2: see your game score"
+            valid_choices "100 990"
             ;;
         920)
             printf "you hurry up. You don't make the bus, and send a message letting your friend know you're gonna be late. He texts back that it's okay. The cat apparently followed you, and you play with him until your bus arrives."
-            make_your_choice "1: Play again\nquit: quit game"
-            valid_choices "100"
+            make_your_choice "1: Play again\n2: see your game score"
+            valid_choices "100 990"
             ;;
         template)
             printf ""
             make_your_choice ""
             ;;
-        quit)
+        990)
+            clear -x
+            printf "Here are your stats!\n\n"
+            sleep 2
+            printf "You played for $(($CURRENT_TIME - $GAME_START_TIME)) seconds! This gives you the title of:\n"
+            if [ $(($CURRENT_TIME - $GAME_START_TIME)) -gt 30 ]
+            then 
+                echo "Meticulous thinker: You take time to consider the best choice, before making it!"
+            else 
+                echo "Fast executer: You optimize, getting from A to B as effectively as possible!"
+            fi
+            sleep 2
+            printf "\nYou petted the cat $SCRATCHES times! This gives you the title of: \n"
+            if [ $SCRATCHES -eq 0 ]
+            then 
+                echo "Cat hater: I'm sure you have other redeeming qualities."
+            elif [ $SCRATCHES -le 5 ]
+            then 
+                echo "Cat cuddler: You appreciate giving cats reasonable amounts of scratches."
+            elif [ $SCRATCHES -le 6 ]
+            then 
+                echo "Cat cuddler: You appreciate giving cats scratches, but remember to respect their boundaries."
+            elif [ $SCRATCHES -lt 10 ]
+            then 
+                echo "Cat cuddle connoiseur: You know how to win back the trust of cats - even if they scratch!"
+            else
+                echo "Crazy cat person: We know cats are awesome, but chill out bro!"
+            fi 
+            sleep 2
+            echo ""
+            read -s -p "Press enter to quit the game."
+            clear -x
             GAME_RUNNING=false
             ;;
         *)
